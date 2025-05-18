@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import type { ReactNode } from 'react';
+// import Spinner from '../ui/Spinner'; // อย่าลืม import Spinner
 
 export interface ProtectedRouteProps {
   allow: Array<'STUDENT'|'STAFF'|'ADMIN'>;
@@ -12,13 +13,17 @@ const ProtectedRoute = ({ allow, children }: ProtectedRouteProps) => {
   const location = useLocation();
   const token = localStorage.getItem('volunteerhub_token');
 
-  if (!isAuthReady) return null;
+  // แสดง loading state ระหว่างตรวจสอบ auth
+  if (!isAuthReady) {
+    return <div className="flex items-center justify-center h-screen">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    </div>;
+  }
 
   // ถ้ามี token และ user แล้วพยายามเข้าหน้า login
   if (token && user && location.pathname === '/login') {
-    if (user.role === 'STUDENT') return <Navigate to="/student" replace />;
-    if (user.role === 'STAFF') return <Navigate to="/staff" replace />;
-    if (user.role === 'ADMIN') return <Navigate to="/admin" replace />;
+    const redirectPath = `/${user.role.toLowerCase()}`;
+    return <Navigate to={redirectPath} replace />;
   }
 
   // ถ้าไม่มี user หรือ token

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { userService } from '@/services/user.service';
 import Navbar from '@/components/navbar/Navbar';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import type { User } from '@/types/user';
 
 export default function DashboardLayout() {
@@ -228,20 +229,19 @@ export default function DashboardLayout() {
 
         {/* User Info Panel */}
         {!loading && userData && (
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="bg-white/80 dark:bg-neutral-950/80 backdrop-blur-lg shadow-lg px-6 py-4 flex items-center justify-between border-b border-violet-300/30 dark:border-violet-900/30"
-          >
-            <div className="flex items-center gap-4">
-              <motion.button
-                className="md:hidden text-neutral-700 dark:text-neutral-100 hover:text-violet-600"
-                onClick={() => setOpen(true)}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Menu size={28} />
-              </motion.button>
+          <motion.header className="bg-white/80 dark:bg-neutral-950/80 backdrop-blur-lg px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <motion.button
+                  className="md:hidden text-neutral-700 dark:text-neutral-100 hover:text-violet-600"
+                  onClick={() => setOpen(true)}
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Menu size={28} />
+                </motion.button>
+                <ThemeToggle />
+              </div>
               <div className="flex items-center gap-3">
                 <motion.div
                   className="h-12 w-12 rounded-full bg-gradient-to-r from-violet-600 to-purple-500 flex items-center justify-center text-white font-semibold text-lg shadow-md"
@@ -261,7 +261,7 @@ export default function DashboardLayout() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </motion.header>
         )}
 
         {/* Content */}

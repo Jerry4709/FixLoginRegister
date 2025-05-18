@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 type MenuItem = {
   to: string;
@@ -306,6 +307,7 @@ export default function StaffLayout() {
             >
               <Menu size={28} />
             </motion.button>
+            <ThemeToggle />
             <div className="flex items-center gap-3">
               <motion.div
                 className={`h-12 w-12 rounded-full ${classes.navGradient} flex items-center justify-center text-white font-semibold text-lg shadow-md`}

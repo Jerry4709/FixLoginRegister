@@ -1,26 +1,29 @@
 import { useAuth as useAuthContext } from '@/context/AuthProvider';
 import * as authService from '@/services/auth.service';
 
-// เพิ่มฟังก์ชันใหม่เพื่อทำให้การ login ง่ายขึ้นสำหรับ component
 export function useAuth() {
   const auth = useAuthContext();
   
-  // เพิ่มฟังก์ชัน loginWithCredentials ที่จะจัดการกับ authService
   async function loginWithCredentials(email: string, password: string) {
-    const { accessToken, user } = await authService.login(email, password);
-    auth.login(accessToken);
-    localStorage.setItem('accessToken', accessToken);
-    return { accessToken, user };
+    // เรียก login service
+    const response = await authService.login(email, password);
+    
+    // เซ็ต token ก่อน
+    localStorage.setItem('volunteerhub_token', response.accessToken);
+    
+    // เรียก auth.login เพื่ออัพเดท context
+    await auth.login(response.accessToken);
+    
+    return response;
   }
+
   async function signUp(payload: authService.RegisterPayload) {
     return auth.signUp(payload)
   }
 
-
-  
   return {
     ...auth,
     loginWithCredentials,
-    signUp, // เพิ่มเข้าไปในผลลัพธ์
+    signUp,
   };
 }

@@ -4,6 +4,7 @@ import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { LogOut, Menu, X, Home, ClipboardList, CheckSquare, Users, PlusSquare, RefreshCw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 export default function AdminLayout() {
   const { user, logout } = useAuth()
@@ -243,14 +244,15 @@ export default function AdminLayout() {
           transition={{ duration: 0.4 }}
           className="flex items-center justify-between bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl px-6 py-4 shadow-sm shadow-indigo-100/30 dark:shadow-gray-800 border-b border-white/20 dark:border-gray-700/20"
         >
-          <motion.button
-            onClick={() => setOpen(true)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="md:hidden p-1.5 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all"
-          >
-            <Menu size={26} className="text-indigo-600 dark:text-indigo-400" />
-          </motion.button>
+          <div className="flex items-center gap-4">
+            <motion.button
+              onClick={() => setOpen(true)}
+              className="md:hidden"
+            >
+              <Menu size={26} />
+            </motion.button>
+            <ThemeToggle />
+          </div>
 
           <div className="flex items-center gap-3">
             <motion.div

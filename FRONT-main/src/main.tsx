@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './index.css'
 import { AuthProvider } from '@/context/AuthProvider'
-import { ThemeProvider } from '@/contexts/ThemeContext' // เพิ่ม import
+import { ThemeProvider } from './context/ThemeProvider'
 import ProtectedRoute from '@/components/protected/ProtectedRoute'
 import DashboardLayout from './layouts/DashboardLayout'
 import MyActivities from './pages/student/MyActivities'
@@ -135,15 +135,15 @@ const router = createBrowserRouter([
 // ─── Render App ──────────────────────────────────────
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThemeProvider> {/* เพิ่ม ThemeProvider ครอบนอกสุด */}
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
         {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
         <AuthProvider>
           <Suspense fallback={<div className="p-8 text-center">Loading…</div>}>
             <RouterProvider router={router} />
           </Suspense>
         </AuthProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 )

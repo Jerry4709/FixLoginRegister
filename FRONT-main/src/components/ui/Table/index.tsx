@@ -10,7 +10,7 @@ export interface Column<T> {
 
 interface DataTableProps<T> {
   columns: Column<T>[];
-  data: T[];
+  data?: T[];                    // ทำให้ optional
   onRowClick?: (row: T) => void;
   isLoading?: boolean;
   className?: string;
@@ -18,7 +18,7 @@ interface DataTableProps<T> {
 
 export function DataTable<T>({
   columns,
-  data,
+  data = [],                   // ตั้ง default เป็น []
   onRowClick,
   isLoading,
   className = '',
@@ -40,7 +40,7 @@ export function DataTable<T>({
     );
 
   /* --------------------------- Empty state ------------------------------ */
-  if (!data.length)
+  if (data.length === 0)
     return (
       <div className="flex flex-col items-center justify-center p-10 bg-white dark:bg-neutral-900 rounded-3xl shadow-lg space-y-2">
         <span className="text-5xl">🗂️</span>
@@ -49,8 +49,6 @@ export function DataTable<T>({
     );
 
   /* ---------------------------- Helpers --------------------------------- */
-  const getCol = (k: keyof T | string) => columns.find((c) => c.key === k);
-  const imgCol = columns.find((c) => c.image);
   const colorDot = (cat: string) =>
     ({
       อาสา: 'bg-violet-500',
@@ -66,43 +64,35 @@ export function DataTable<T>({
           key={idx}
           onClick={() => onRowClick?.(item)}
           className={`group overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 shadow-lg transition
-            hover:shadow-xl hover:-translate-y-1 ${onRowClick && 'cursor-pointer'} `}
+            hover:shadow-xl hover:-translate-y-1 ${onRowClick ? 'cursor-pointer' : ''}`}
         >
           {/* image */}
           <div className="aspect-video bg-neutral-100 dark:bg-neutral-700 overflow-hidden">
-            {imgCol?.render ? (
-              imgCol.render(item)
-            ) : (
-              <div className="h-full flex items-center justify-center text-4xl text-neutral-300">📷</div>
-            )}
+            {columns.find((c) => c.image)?.render
+              ? columns.find((c) => c.image)!.render!(item)
+              : <div className="h-full flex items-center justify-center text-4xl text-neutral-300">📷</div>}
           </div>
 
           {/* body */}
           <div className="p-6 space-y-3">
             {/* title */}
-            {getCol('title') && (
+            {columns.some(c => c.key === 'title') && (
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-white truncate">
-                {String(item[getCol('title')!.key])}
+                {String(item['title' as keyof T])}
               </h3>
             )}
 
             {/* category + date */}
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${
-                  getCol('category')
-                    ? colorDot(String(item[getCol('category')!.key]))
-                    : 'bg-neutral-400'
-                }`} />
+                <span className={`w-2 h-2 rounded-full ${colorDot(String(item['category' as keyof T]))}`} />
                 <span className="text-neutral-600 dark:text-neutral-400">
-                  {getCol('category') ? String(item[getCol('category')!.key]) : ''}
+                  {String(item['category' as keyof T])}
                 </span>
               </div>
-              {getCol('start_time') && (
-                <time className="text-neutral-500 dark:text-neutral-400">
-                  {new Date(String(item[getCol('start_time')!.key]) ).toLocaleDateString('th-TH')}
-                </time>
-              )}
+              <time className="text-neutral-500 dark:text-neutral-400">
+                {new Date(String(item['start_time' as keyof T])).toLocaleDateString('th-TH')}
+              </time>
             </div>
           </div>
         </article>
@@ -134,23 +124,23 @@ export function DataTable<T>({
               className={`
                 group bg-white dark:bg-neutral-800/60 backdrop-blur-xl
                 transition hover:bg-violet-50/50 dark:hover:bg-violet-500/10
-                ${onRowClick && 'cursor-pointer'}`}
+                ${onRowClick ? 'cursor-pointer' : ''}`}
               style={{ borderRadius: '1.25rem' }}
             >
               {columns.map((col, cIdx) => (
                 <td key={cIdx} className="px-6 py-4 first:rounded-l-2xl last:rounded-r-2xl">
-                  {col.render ? (
-                    col.render(row)
-                  ) : col.key === 'category' ? (
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full ${colorDot(String(row[col.key]))}`} />
-                      <span>{String(row[col.key])}</span>
-                    </div>
-                  ) : col.key === 'start_time' || col.key === 'end_time' ? (
-                    new Date(String(row[col.key])).toLocaleDateString('th-TH')
-                  ) : (
-                    String(row[col.key])
-                  )}
+                  {col.render
+                    ? col.render(row)
+                    : col.key === 'category'
+                    ? (
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${colorDot(String(row[col.key]))}`} />
+                        <span>{String(row[col.key])}</span>
+                      </div>
+                    )
+                    : (col.key === 'start_time' || col.key === 'end_time')
+                    ? new Date(String(row[col.key])).toLocaleDateString('th-TH')
+                    : String(row[col.key])}
                 </td>
               ))}
             </tr>
@@ -164,13 +154,9 @@ export function DataTable<T>({
   return (
     <section className={`space-y-4 ${className}`}>
       {/* mobile / tablet */}
-      <div className="block md:hidden">
-        <CardView />
-      </div>
+      <div className="block md:hidden"><CardView /></div>
       {/* desktop */}
-      <div className="hidden md:block">
-        <TableView />
-      </div>
+      <div className="hidden md:block"><TableView /></div>
     </section>
   );
 }

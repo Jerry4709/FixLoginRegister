@@ -2,12 +2,19 @@
 
 @plugin "daisyui";
 
+/* Base Theme Variables */
 :root {
   --primary: 139, 92, 246;    /* violet-500 */
   --secondary: 99, 102, 241;  /* indigo-500 */
   --accent: 251, 191, 36;     /* amber-400 */
   --neutral: 38, 38, 38;      /* neutral-800 */
 }
+
+/* Theme Transition */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
 [data-theme="light"] {
   color-scheme: light;
   
